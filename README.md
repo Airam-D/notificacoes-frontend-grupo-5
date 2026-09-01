@@ -1,1 +1,1 @@
-Este é o REDME.
+Este é o README.
