@@ -1,7 +1,7 @@
 import { useState } from "react";
-import FilterChip from "./components/FilterChip";
-import NotificationCard from "./components/NotificationCard";
-import Button from "./components/Button";
+import FilterBar from "./components/FilterBar";
+import NovaNotificacaoForm from "./components/Formulario";
+import NotificationList from "./components/NotificationList";
 
 const notificacoesExemplo = [
   {
@@ -23,35 +23,31 @@ const notificacoesExemplo = [
 ];
 
 function App() {
+  const [notificacoes, setNotificacoes] = useState(notificacoesExemplo);
   const [filtro, setFiltro] = useState("todas");
+
+  function adicionarNotificacao(nova) {
+    setNotificacoes((atual) => [nova, ...atual]);
+  }
+
+  const notificacoesFiltradas = notificacoes.filter((n) => {
+    if (filtro === "push") return n.canal.toLowerCase() === "push";
+    if (filtro === "email") return n.canal.toLowerCase() === "email";
+    return true;
+  });
+
   return (
     <div className="max-w-2xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Central de Notificações</h1>
 
-      <div className="flex gap-2 mb-4">
-        <FilterChip
-          label="Todas"
-          ativo={filtro === "todas"}
-          onClick={() => setFiltro("todas")}
-        />
-        <FilterChip
-          label="Push"
-          ativo={filtro === "push"}
-          onClick={() => setFiltro("push")}
+      {/* Formulário para adicionar nova notificação */}
+      <NovaNotificacaoForm onAdicionar={adicionarNotificacao} />
 
-        />
-        <FilterChip
-          label="E-mail"
-          ativo={filtro === "email"}
-          onClick={() => setFiltro("email")}
-        />
-      </div>
+      {/* Barra de filtros com estado elevado */}
+      <FilterBar filtroAtual={filtro} onFiltroChange={setFiltro} />
 
-      {notificacoesExemplo.map((n) => (
-        <NotificationCard key={n.id} {...n} />
-      ))}
-
-      <Button variant="destaque">Enviar notificação de teste</Button>
+      {/* Lista de notificações filtradas */}
+      <NotificationList notificacoes={notificacoesFiltradas} />
     </div>
   );
 }
