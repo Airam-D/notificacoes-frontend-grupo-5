@@ -2,6 +2,7 @@ import { useState } from "react";
 import FilterBar from "./components/FilterBar";
 import NovaNotificacaoForm from "./components/Formulario";
 import NotificationList from "./components/NotificationList";
+import Saudacao from "./components/Saudacao";
 
 const notificacoesExemplo = [
   {
@@ -31,23 +32,27 @@ function App() {
   }
 
   const notificacoesFiltradas = notificacoes.filter((n) => {
-    if (filtro === "push") return n.canal.toLowerCase() === "push";
-    if (filtro === "email") return n.canal.toLowerCase() === "email";
+    if (filtro === "todas") return true;
+    if (filtro === "push") return n.canal === "PUSH";
+    if (filtro === "email") return n.canal === "EMAIL";
     return true;
   });
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Central de Notificações</h1>
+      <div>
+        <Saudacao nome="Airam" />
+        <h1 className="text-2xl font-bold mb-4">Central de Notificações</h1>
+        {/* Barra de filtros com estado elevado */}
+        <FilterBar filtroAtual={filtro} onFiltroChange={setFiltro} />
 
-      {/* Formulário para adicionar nova notificação */}
-      <NovaNotificacaoForm onAdicionar={adicionarNotificacao} />
+        {/* Formulário para adicionar nova notificação */}
+        <NovaNotificacaoForm onAdicionar={adicionarNotificacao} />
 
-      {/* Barra de filtros com estado elevado */}
-      <FilterBar filtroAtual={filtro} onFiltroChange={setFiltro} />
 
-      {/* Lista de notificações filtradas */}
-      <NotificationList notificacoes={notificacoesFiltradas} />
+        {/* Lista de notificações filtradas */}
+        <NotificationList notificacoes={notificacoesFiltradas} />
+      </div>
     </div>
   );
 }
