@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FilterBar from "./components/FilterBar";
 import NovaNotificacaoForm from "./components/Formulario";
 import NotificationList from "./components/NotificationList";
 import Saudacao from "./components/Saudacao";
+import { API_URL } from "./config";
 
 const notificacoesExemplo = [
   {
@@ -24,8 +25,26 @@ const notificacoesExemplo = [
 ];
 
 function App() {
-  const [notificacoes, setNotificacoes] = useState(notificacoesExemplo);
+  const [notificacoes, setNotificacoes] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState(null);
   const [filtro, setFiltro] = useState("todas");
+
+  useEffect(() => {
+    async function buscar() {
+      try {
+        const resposta = await fetch(`${API_URL}/notificacoes`);
+        if (!resposta.ok) throw new Error("Erro ao buscar notificações");
+        const dados = await resposta.json();
+        setNotificacoes(dados);
+      } catch (e) {
+        setErro(e.message);
+      } finally {
+        setCarregando(false);
+      }
+    }
+    buscar();
+  }, []);
 
   function adicionarNotificacao(nova) {
     setNotificacoes((atual) => [nova, ...atual]);
